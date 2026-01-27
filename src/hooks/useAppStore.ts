@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useReducer, useRef } from 'react'
+import { getClientId, getSupabaseClient, getTeashopId } from '../services/supabaseClient'
 
 export type TableStatus = 'EMPTY' | 'ORDERED' | 'PREPARING' | 'SERVED'
 
@@ -547,12 +548,74 @@ function reducer(state: AppState, action: Action): AppState {
 export function useAppStore() {
   const [state, dispatch] = useReducer(reducer, undefined, hydrate)
 
+  const stateRef = useRef(state)
+  useEffect(() => {
+    stateRef.current = state
+  }, [state])
+
   const lastPersistedRef = useRef<string | null>(null)
+  const lastRemoteRef = useRef<string | null>(null)
+  const persistTimerRef = useRef<number | null>(null)
+
+  const supabase = useMemo(() => getSupabaseClient(), [])
+  const teashopId = useMemo(() => getTeashopId(), [])
+  const clientId = useMemo(() => getClientId(), [])
 
   useEffect(() => {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (raw) lastPersistedRef.current = raw
   }, [])
+
+  useEffect(() => {
+    if (!supabase) return
+
+    let cancelled = false
+
+    const load = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('teashop_state')
+          .select('state, updated_by')
+          .eq('id', teashopId)
+          .maybeSingle()
+
+        if (cancelled) return
+
+        if (error) {
+          return
+        }
+
+        if (data?.state) {
+          const raw = JSON.stringify(data.state)
+          lastRemoteRef.current = raw
+          lastPersistedRef.current = raw
+          try {
+            localStorage.setItem(STORAGE_KEY, raw)
+          } catch {
+            // ignore
+          }
+          dispatch({ type: 'REPLACE_FROM_STORAGE', persisted: data.state as PersistedState })
+          return
+        }
+
+        const initialRaw = serializePersisted(stateRef.current)
+        lastRemoteRef.current = initialRaw
+        lastPersistedRef.current = initialRaw
+
+        await supabase
+          .from('teashop_state')
+          .upsert({ id: teashopId, state: JSON.parse(initialRaw), updated_by: clientId })
+      } catch {
+        // ignore
+      }
+    }
+
+    void load()
+
+    return () => {
+      cancelled = true
+    }
+  }, [clientId, supabase, teashopId])
 
   useEffect(() => {
     try {
@@ -564,6 +627,34 @@ export function useAppStore() {
       // ignore
     }
   }, [state])
+
+  useEffect(() => {
+    if (!supabase) return
+
+    const nextRaw = serializePersisted(state)
+    if (lastRemoteRef.current === nextRaw) return
+
+    if (persistTimerRef.current) {
+      window.clearTimeout(persistTimerRef.current)
+    }
+
+    persistTimerRef.current = window.setTimeout(() => {
+      try {
+        void supabase
+          .from('teashop_state')
+          .upsert({ id: teashopId, state: JSON.parse(nextRaw), updated_by: clientId })
+      } catch {
+        // ignore
+      }
+    }, 250)
+
+    return () => {
+      if (persistTimerRef.current) {
+        window.clearTimeout(persistTimerRef.current)
+        persistTimerRef.current = null
+      }
+    }
+  }, [clientId, state, supabase, teashopId])
 
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
@@ -583,6 +674,41 @@ export function useAppStore() {
     window.addEventListener('storage', onStorage)
     return () => window.removeEventListener('storage', onStorage)
   }, [])
+
+  useEffect(() => {
+    if (!supabase) return
+
+    const channel = supabase
+      .channel(`teashop_state:${teashopId}`)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'teashop_state', filter: `id=eq.${teashopId}` },
+        (payload: unknown) => {
+          const next = (payload as { new?: { state?: unknown; updated_by?: string } }).new
+          if (!next?.state) return
+
+          const raw = JSON.stringify(next.state)
+
+          lastRemoteRef.current = raw
+          if (next.updated_by === clientId) return
+          if (lastPersistedRef.current === raw) return
+
+          lastPersistedRef.current = raw
+          try {
+            localStorage.setItem(STORAGE_KEY, raw)
+          } catch {
+            // ignore
+          }
+
+          dispatch({ type: 'REPLACE_FROM_STORAGE', persisted: next.state as PersistedState })
+        },
+      )
+      .subscribe()
+
+    return () => {
+      void supabase.removeChannel(channel)
+    }
+  }, [clientId, supabase, teashopId])
 
   const tableIds = useMemo(() => {
     const total = state.shop.totalTables
