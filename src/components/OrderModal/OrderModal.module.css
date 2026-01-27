@@ -1,0 +1,290 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  z-index: 50;
+}
+
+.modal {
+  width: min(940px, 100%);
+  border-radius: 20px;
+  border: 1px solid var(--stroke);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.06));
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(16px);
+  padding: 16px;
+  display: grid;
+  gap: 14px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.closeBtn {
+  border: 1px solid var(--stroke);
+  background: rgba(0, 0, 0, 0.18);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.panel {
+  border: 1px solid var(--stroke);
+  background: rgba(0, 0, 0, 0.14);
+  border-radius: 16px;
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.panelTitle {
+  font-weight: 800;
+  color: var(--cream);
+}
+
+.catalog {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.itemBtn {
+  border: 1px solid var(--stroke);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  border-radius: 14px;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.itemBtn:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.orderList {
+  display: grid;
+  gap: 8px;
+}
+
+.orderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--stroke);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.orderLeft {
+  display: grid;
+  gap: 4px;
+}
+
+.orderRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iconBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: rgba(0, 0, 0, 0.18);
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.iconBtnDanger {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(251, 113, 133, 0.55);
+  background: rgba(251, 113, 133, 0.12);
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.statusRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.statusBtn {
+  border: 1px solid var(--stroke);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 10px;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.statusBtnActive {
+  border-color: rgba(245, 158, 11, 0.55);
+  background: rgba(245, 158, 11, 0.14);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.select {
+  width: 100%;
+  border: 1px solid var(--stroke);
+  background: rgba(0, 0, 0, 0.18);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 84px;
+  resize: vertical;
+  border: 1px solid var(--stroke);
+  background: rgba(0, 0, 0, 0.18);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.pay {
+  border: 1px solid rgba(45, 212, 191, 0.55);
+  background: rgba(45, 212, 191, 0.14);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.pay:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.danger {
+  border: 1px solid rgba(251, 113, 133, 0.55);
+  background: rgba(251, 113, 133, 0.15);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.primary {
+  border: none;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.9), rgba(251, 113, 133, 0.7));
+  color: #2a120b;
+  border-radius: 999px;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.billCard {
+  border: 1px solid var(--stroke);
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+  padding: 10px;
+  display: grid;
+  gap: 6px;
+}
+
+.billTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.billLog {
+  display: grid;
+  gap: 8px;
+}
+
+.billRow {
+  border: 1px solid var(--stroke);
+  background: rgba(0, 0, 0, 0.14);
+  border-radius: 12px;
+  padding: 8px 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.billRowTop {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.billItems {
+  display: grid;
+  gap: 6px;
+}
+
+.billItemRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--stroke);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+@media (max-width: 820px) {
+  .body {
+    grid-template-columns: 1fr;
+  }
+
+  .catalog {
+    grid-template-columns: 1fr;
+  }
+}

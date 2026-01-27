@@ -1,0 +1,272 @@
+.screen {
+  min-height: 100vh;
+  background: #0b0f14;
+  color: #f4f6f8;
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #0b0f14;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  padding: 14px 14px 10px;
+  display: grid;
+  gap: 6px;
+}
+
+.shopName {
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.tableNo {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+}
+
+.tabs {
+  position: sticky;
+  top: 62px;
+  z-index: 19;
+  background: #0b0f14;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  gap: 14px;
+  padding: 10px 14px;
+  overflow-x: auto;
+}
+
+.tab {
+  padding: 8px 2px;
+  color: rgba(255, 255, 255, 0.78);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tabActive {
+  color: #ffffff;
+  border-bottom-color: #ffffff;
+}
+
+.list {
+  padding: 14px;
+  display: grid;
+  gap: 12px;
+  overflow: auto;
+}
+
+.itemCard {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 14px;
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+  background: transparent;
+}
+
+.itemTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.itemLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.itemMedia {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  display: grid;
+  place-items: center;
+}
+
+.itemText {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+
+.itemName {
+  font-weight: 800;
+}
+
+.itemPrice {
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 700;
+}
+
+.qtyRow {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.qtyLabel {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 13px;
+}
+
+.qtyBtn {
+  width: 52px;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.qtyBtn:disabled {
+  opacity: 0.35;
+}
+
+.qtyValue {
+  min-width: 40px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.cart {
+  position: sticky;
+  bottom: 0;
+  z-index: 30;
+  background: #0b0f14;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  padding: 10px 14px;
+}
+
+.cartTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cartSummary {
+  display: grid;
+  gap: 2px;
+}
+
+.cartTitle {
+  font-weight: 900;
+}
+
+.cartMeta {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+}
+
+.placeBtn {
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: #ffffff;
+  color: #0b0f14;
+  font-weight: 900;
+}
+
+.placeBtn:disabled {
+  opacity: 0.35;
+}
+
+.cartBody {
+  margin-top: 10px;
+  max-height: 70vh;
+  overflow: auto;
+  display: grid;
+  gap: 10px;
+}
+
+.cartRow {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.small {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+}
+
+.stateWrap {
+  padding: 18px 14px;
+  display: grid;
+  gap: 10px;
+}
+
+.stateTitle {
+  font-weight: 900;
+  font-size: 16px;
+}
+
+.pendingDots {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.65);
+  animation: pulse 1.2s infinite ease-in-out;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.confirm {
+  border: 1px solid rgba(34, 197, 94, 0.55);
+  border-radius: 14px;
+  padding: 12px;
+  background: transparent;
+}
+
+.confirmBtn {
+  margin-top: 10px;
+  height: 44px;
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  color: #ffffff;
+  font-weight: 900;
+}

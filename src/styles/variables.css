@@ -1,0 +1,25 @@
+:root {
+  --bg: #0f0b07;
+  --surface: rgba(255, 255, 255, 0.06);
+  --surface-strong: rgba(255, 255, 255, 0.1);
+  --stroke: rgba(255, 255, 255, 0.12);
+
+  --chai-brown: #3a2516;
+  --chai-brown-2: #2a1a10;
+  --cream: #f4ead9;
+  --cream-2: #e7d8bf;
+  --leaf: #2dd4bf;
+  --leaf-2: #16a34a;
+  --amber: #f59e0b;
+  --rose: #fb7185;
+
+  --text: rgba(255, 255, 255, 0.92);
+  --muted: rgba(255, 255, 255, 0.7);
+
+  --shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+  --radius: 16px;
+  --radius-sm: 12px;
+
+  --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji",
+    "Segoe UI Emoji";
+}

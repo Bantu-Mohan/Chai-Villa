@@ -1,0 +1,113 @@
+.card {
+  border: 1px solid var(--stroke);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px;
+  backdrop-filter: blur(14px);
+  cursor: pointer;
+  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
+  display: grid;
+  gap: 12px;
+  min-height: 190px;
+}
+
+.card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.selected {
+  border-color: rgba(45, 212, 191, 0.6);
+  background: rgba(45, 212, 191, 0.08);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.tableNo {
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 0.2px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--stroke);
+  background: rgba(0, 0, 0, 0.16);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+}
+
+.dotEmpty {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.dotOrdered {
+  background: var(--amber);
+}
+
+.dotPreparing {
+  background: var(--leaf);
+}
+
+.dotServed {
+  background: var(--cream);
+}
+
+.meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.metaItem {
+  border: 1px solid var(--stroke);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.12);
+  padding: 12px;
+  display: grid;
+  gap: 4px;
+}
+
+.itemsPreview {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.2;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.metaLabel {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.metaValue {
+  font-weight: 700;
+}
+
+.notes {
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

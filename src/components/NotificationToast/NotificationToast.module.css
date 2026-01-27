@@ -1,0 +1,54 @@
+.wrap {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  display: grid;
+  gap: 10px;
+  z-index: 60;
+}
+
+.toast {
+  border: 1px solid var(--stroke);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--text);
+  border-radius: 14px;
+  padding: 10px 12px;
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow);
+  min-width: 240px;
+  max-width: 340px;
+  font-weight: 600;
+}
+
+.rowTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.title {
+  font-weight: 800;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  border: 1px solid var(--stroke);
+  background: rgba(0, 0, 0, 0.18);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.muted {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-top: 4px;
+}
