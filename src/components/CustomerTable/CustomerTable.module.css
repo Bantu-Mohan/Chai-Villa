@@ -96,12 +96,14 @@
 }
 
 .itemMedia {
-  width: 44px;
-  height: 44px;
+  width: 56px;
+  height: 56px;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  display: grid;
-  place-items: center;
+  border: 1px solid var(--stroke);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.10);
 }
 
 .itemText {
@@ -115,7 +117,7 @@
 }
 
 .itemPrice {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--muted);
   font-weight: 700;
   flex: 0 0 auto;
 }
@@ -163,7 +165,7 @@
   z-index: 30;
   background: var(--surface-strong);
   border-top: 1px solid var(--stroke);
-  padding: 10px 14px;
+  padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
 }
 
 .cartTop {

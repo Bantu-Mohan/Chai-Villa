@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import styles from './NotificationToast.module.css'
 import type { UINotification } from '../../hooks/useAppStore'
 
@@ -8,6 +9,35 @@ type Props = {
 }
 
 export default function NotificationToast({ notifications, onDismiss, onOpenTable }: Props) {
+  const timersRef = useRef<Map<string, number>>(new Map())
+
+  useEffect(() => {
+    for (const n of notifications) {
+      if (timersRef.current.has(n.id)) continue
+      const t = window.setTimeout(() => {
+        timersRef.current.delete(n.id)
+        onDismiss(n.id)
+      }, 5000)
+      timersRef.current.set(n.id, t)
+    }
+
+    for (const [id, t] of timersRef.current) {
+      if (notifications.some((n) => n.id === id)) continue
+      window.clearTimeout(t)
+      timersRef.current.delete(id)
+    }
+  }, [notifications, onDismiss])
+
+  useEffect(
+    () => () => {
+      for (const t of timersRef.current.values()) {
+        window.clearTimeout(t)
+      }
+      timersRef.current.clear()
+    },
+    [],
+  )
+
   if (notifications.length === 0) return null
 
   return (

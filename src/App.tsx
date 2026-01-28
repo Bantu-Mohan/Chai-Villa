@@ -11,6 +11,8 @@ import styles from './App.module.css'
 let sharedAudioCtx: AudioContext | null = null
 let soundArmed = false
 
+const THEME_KEY = 'teashop_theme_v1'
+
 function getAudioContextCtor(): (typeof AudioContext) | null {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const w = window as any
@@ -36,6 +38,7 @@ function armSound() {
 
 function playBeep() {
   try {
+    if (!soundArmed) armSound()
     if (!soundArmed || !sharedAudioCtx) return
     if (sharedAudioCtx.state === 'suspended') return
 
@@ -57,6 +60,24 @@ function playBeep() {
 
 function App() {
   const { state, actions, tableIds } = useAppStore()
+
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    try {
+      const raw = localStorage.getItem(THEME_KEY)
+      return raw === 'dark' ? 'dark' : 'light'
+    } catch {
+      return 'light'
+    }
+  })
+
+  useEffect(() => {
+    document.body.dataset.theme = theme
+    try {
+      localStorage.setItem(THEME_KEY, theme)
+    } catch {
+      // ignore
+    }
+  }, [theme])
 
   const customerTableId = useMemo(() => {
     const params = new URLSearchParams(window.location.search)
@@ -114,6 +135,30 @@ function App() {
   const selectedTableId = state.ui.selectedTableId
   const selectedTable = selectedTableId ? state.tables[selectedTableId] : null
 
+  const metrics = useMemo(() => {
+    let filledTables = 0
+    let servedTables = 0
+    let orderedTables = 0
+    let paidOrders = 0
+
+    for (const t of Object.values(state.tables)) {
+      if (t.items.length > 0 || t.status !== 'EMPTY') filledTables += 1
+      if (t.status === 'SERVED') servedTables += 1
+      if (t.status === 'ORDERED') orderedTables += 1
+      paidOrders += t.billLog?.length ?? 0
+    }
+
+    return { filledTables, servedTables, orderedTables, paidOrders }
+  }, [state.tables])
+
+  const timeText = useMemo(() => {
+    return new Intl.DateTimeFormat(undefined, {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    }).format(new Date(now))
+  }, [now])
+
   const isModalOpen = state.ui.activeModal === 'ORDER' && Boolean(selectedTableId && selectedTable)
 
   const selectedInfo = useMemo(() => {
@@ -149,6 +194,7 @@ function App() {
       const wasOrdered = prevT?.status === 'ORDERED'
 
       if (t.status === 'ORDERED' && !wasOrdered && t.items.length > 0) {
+        armSound()
         playBeep()
         actions.notifyNewOrder(id, t.amount)
       }
@@ -190,6 +236,46 @@ function App() {
           actions.openOrderModal()
         }}
       >
+        <div className={styles.metricsBar}>
+          <div className={styles.metric}>
+            <div className={styles.metricLabel}>Orders Served</div>
+            <div className={styles.metricValue}>{metrics.servedTables}</div>
+          </div>
+          <div className={styles.metric}>
+            <div className={styles.metricLabel}>Paid Orders</div>
+            <div className={styles.metricValue}>{metrics.paidOrders}</div>
+          </div>
+          <div className={styles.metric}>
+            <div className={styles.metricLabel}>Filled Tables</div>
+            <div className={styles.metricValue}>{metrics.filledTables}</div>
+          </div>
+          <div className={styles.metric}>
+            <div className={styles.metricLabel}>Ordered</div>
+            <div className={styles.metricValue}>{metrics.orderedTables}</div>
+          </div>
+
+          <div className={styles.metricRight}>
+            <div className={styles.metricTime}>{timeText}</div>
+            <div className={styles.tableControls}>
+              <button
+                type="button"
+                className={styles.tableBtn}
+                onClick={() => actions.setTotalTables(state.shop.totalTables - 1)}
+                disabled={state.shop.totalTables <= 1}
+              >
+                −
+              </button>
+              <div className={styles.tableCount}>Tables: {state.shop.totalTables}</div>
+              <button
+                type="button"
+                className={styles.tableBtn}
+                onClick={() => actions.setTotalTables(state.shop.totalTables + 1)}
+              >
+                +
+              </button>
+            </div>
+          </div>
+        </div>
         <div className={styles.gridWrap}>
           <TableGrid
             tableIds={sortedTableIds}
@@ -211,8 +297,8 @@ function App() {
           table={selectedInfo.table}
           onClose={() => actions.closeModal()}
           onAddItem={(item) => {
+            if (selectedInfo.table.status !== 'EMPTY') return
             actions.addItem(selectedInfo.tableId, item, 1)
-            actions.notify(`Added ${item.name} to Table ${selectedInfo.tableId}`)
           }}
           onDecrementItem={(itemId: string) => {
             actions.decrementItem(selectedInfo.tableId, itemId)
@@ -222,19 +308,15 @@ function App() {
           }}
           onStatusChange={(status) => {
             actions.updateTableStatus(selectedInfo.tableId, status)
-            actions.notify(`Table ${selectedInfo.tableId} → ${status}`)
           }}
           onMarkPaid={() => {
-            const amount = selectedInfo.table.amount
             actions.markPaid(selectedInfo.tableId)
-            actions.notify(`Paid: Table ${selectedInfo.tableId} • ₹${amount.toFixed(0)}`)
           }}
           onNotesChange={(notes) => {
             actions.setNotes(selectedInfo.tableId, notes)
           }}
           onClear={() => {
             actions.clearTable(selectedInfo.tableId)
-            actions.notify(`Cleared Table ${selectedInfo.tableId}`)
           }}
         />
       ) : null}
@@ -247,6 +329,81 @@ function App() {
           actions.openOrderModal()
         }}
       />
+
+      <button
+        type="button"
+        className={styles.themeToggle}
+        onClick={() => setTheme((v) => (v === 'dark' ? 'light' : 'dark'))}
+        aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+        title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+      >
+        {theme === 'dark' ? (
+          <svg className={styles.themeIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M12 3v2"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+            />
+            <path
+              d="M12 19v2"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+            />
+            <path
+              d="M4.22 4.22l1.42 1.42"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+            />
+            <path
+              d="M18.36 18.36l1.42 1.42"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+            />
+            <path
+              d="M3 12h2"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+            />
+            <path
+              d="M19 12h2"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+            />
+            <path
+              d="M4.22 19.78l1.42-1.42"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+            />
+            <path
+              d="M18.36 5.64l1.42-1.42"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinecap="round"
+            />
+            <path
+              d="M12 7a5 5 0 1 0 0 10a5 5 0 0 0 0-10Z"
+              stroke="currentColor"
+              strokeWidth="1.7"
+            />
+          </svg>
+        ) : (
+          <svg className={styles.themeIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M21 13.4A7.2 7.2 0 0 1 10.6 3a6.7 6.7 0 1 0 10.4 10.4Z"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinejoin="round"
+            />
+          </svg>
+        )}
+      </button>
     </div>
   )
 }

@@ -41,11 +41,14 @@ export default function TableCard({ tableId, table, now, selected, onClick }: Pr
     elapsed === null ? null : `${elapsed.minutes}:${String(elapsed.seconds).padStart(2, '0')}`
 
   const itemNames = useMemo(() => {
-    const uniq = Array.from(new Set(table.items.map((it) => it.name)))
-    const shown = uniq.slice(0, 4)
-    const remaining = Math.max(0, uniq.length - shown.length)
-    return remaining > 0 ? `${shown.join(', ')} +${remaining}` : shown.join(', ')
+    const pairs = table.items.map((it) => `${it.name} ${it.qty}`)
+    const shown = pairs.slice(0, 3)
+    const remaining = Math.max(0, pairs.length - shown.length)
+    const base = shown.join(', ')
+    return remaining > 0 ? `${base}…` : base
   }, [table.items])
+
+  const itemsCount = useMemo(() => table.items.reduce((s, it) => s + it.qty, 0), [table.items])
 
   return (
     <div
@@ -68,7 +71,8 @@ export default function TableCard({ tableId, table, now, selected, onClick }: Pr
       <div className={styles.meta}>
         <div className={styles.metaItem}>
           <div className={styles.metaLabel}>Items</div>
-          <div className={styles.metaValue}>{table.items.reduce((s, it) => s + it.qty, 0)}</div>
+          <div className={styles.metaValue}>{itemsCount}</div>
+          {table.items.length > 0 ? <div className={styles.metaSub}>{itemNames}</div> : null}
         </div>
         <div className={styles.metaItem}>
           <div className={styles.metaLabel}>Total</div>

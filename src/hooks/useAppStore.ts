@@ -8,7 +8,8 @@ export interface OrderItem {
   name: string
   price: number
   qty: number
-  category?: 'Tea' | 'Coffee' | 'Biscuits' | 'Snacks' | 'Others'
+  category?: string
+  portion?: string
 }
 
 export interface PaidBill {
@@ -46,6 +47,9 @@ export type UINotification =
 export interface AppState {
   shop: { name: string; totalTables: number }
   tables: Record<string, Table>
+  meta: {
+    lastAutoClearAt: number | null
+  }
   ui: {
     activeModal: null | 'ORDER'
     notifications: UINotification[]
@@ -56,12 +60,14 @@ export interface AppState {
 type PersistedState = {
   shop: AppState['shop']
   tables: AppState['tables']
+  meta?: Partial<AppState['meta']>
 }
 
 type Action =
   | { type: 'SELECT_TABLE'; tableId: string | null }
   | { type: 'OPEN_MODAL'; modal: 'ORDER' }
   | { type: 'CLOSE_MODAL' }
+  | { type: 'SET_TOTAL_TABLES'; totalTables: number }
   | { type: 'UPDATE_TABLE_STATUS'; tableId: string; status: TableStatus }
   | { type: 'ADD_ITEM'; tableId: string; item: Omit<OrderItem, 'qty'>; qty?: number }
   | { type: 'CUSTOMER_ADD_ITEM'; tableId: string; item: Omit<OrderItem, 'qty'>; qty?: number }
@@ -73,6 +79,7 @@ type Action =
   | { type: 'SET_NOTES'; tableId: string; notes: string }
   | { type: 'MARK_PAID'; tableId: string }
   | { type: 'CLEAR_TABLE'; tableId: string }
+  | { type: 'CLEAR_ALL_TABLES'; at: number }
   | { type: 'PUSH_NOTIFICATION'; notification: UINotification }
   | { type: 'DISMISS_NOTIFICATION'; id: string }
   | { type: 'REPLACE_FROM_STORAGE'; persisted: PersistedState }
@@ -115,6 +122,9 @@ function buildDefaultState(): AppState {
   return {
     shop: { name: 'Roadside Tea Shop', totalTables },
     tables: ensureTables(totalTables),
+    meta: {
+      lastAutoClearAt: null,
+    },
     ui: {
       activeModal: null,
       notifications: [],
@@ -147,11 +157,17 @@ function normalizePersisted(persisted: PersistedState): PersistedState {
       totalTables,
     },
     tables,
+    meta: {
+      lastAutoClearAt:
+        typeof persisted?.meta?.lastAutoClearAt === 'number' && Number.isFinite(persisted.meta.lastAutoClearAt)
+          ? persisted.meta.lastAutoClearAt
+          : null,
+    },
   }
 }
 
 function serializePersisted(state: AppState): string {
-  const persisted: PersistedState = { shop: state.shop, tables: state.tables }
+  const persisted: PersistedState = { shop: state.shop, tables: state.tables, meta: state.meta }
   return JSON.stringify(persisted)
 }
 
@@ -174,6 +190,9 @@ function hydrate(): AppState {
     return {
       shop: normalized.shop,
       tables: normalized.tables,
+      meta: {
+        lastAutoClearAt: normalized.meta?.lastAutoClearAt ?? null,
+      },
       ui: {
         activeModal: null,
         notifications: [],
@@ -198,6 +217,9 @@ function reducer(state: AppState, action: Action): AppState {
         ...state,
         shop: normalized.shop,
         tables: normalized.tables,
+        meta: {
+          lastAutoClearAt: normalized.meta?.lastAutoClearAt ?? state.meta.lastAutoClearAt,
+        },
         ui: {
           ...state.ui,
           notifications: nextNotifications,
@@ -221,6 +243,23 @@ function reducer(state: AppState, action: Action): AppState {
         ...state,
         ui: { ...state.ui, activeModal: null },
       }
+
+    case 'SET_TOTAL_TABLES': {
+      const nextTotal = Math.max(1, Math.min(200, Math.floor(action.totalTables)))
+      const nextTables = ensureTables(nextTotal, state.tables)
+      const selectedTableId = state.ui.selectedTableId
+      const selectedValid = selectedTableId ? Boolean(nextTables[selectedTableId]) : true
+      return {
+        ...state,
+        shop: { ...state.shop, totalTables: nextTotal },
+        tables: nextTables,
+        ui: {
+          ...state.ui,
+          selectedTableId: selectedValid ? selectedTableId : null,
+          activeModal: selectedValid ? state.ui.activeModal : null,
+        },
+      }
+    }
 
     case 'UPDATE_TABLE_STATUS': {
       const prev = state.tables[action.tableId]
@@ -364,6 +403,7 @@ function reducer(state: AppState, action: Action): AppState {
     case 'DECREMENT_ITEM': {
       const prev = state.tables[action.tableId]
       if (!prev) return state
+      if (prev.status !== 'EMPTY') return state
 
       const idx = prev.items.findIndex((it) => it.id === action.itemId)
       if (idx < 0) return state
@@ -377,15 +417,11 @@ function reducer(state: AppState, action: Action): AppState {
       }
 
       const nextAmount = calculateAmount(nextItems)
-      const nextStatus: TableStatus = nextItems.length === 0 ? 'EMPTY' : prev.status === 'EMPTY' ? 'ORDERED' : prev.status
-      const nextStartedAt = nextItems.length === 0 ? null : prev.startedAt ?? Date.now()
 
       const nextTable: Table = {
         ...prev,
         items: nextItems,
         amount: nextAmount,
-        status: nextStatus,
-        startedAt: nextStartedAt,
       }
 
       return {
@@ -400,20 +436,17 @@ function reducer(state: AppState, action: Action): AppState {
     case 'REMOVE_ITEM': {
       const prev = state.tables[action.tableId]
       if (!prev) return state
+      if (prev.status !== 'EMPTY') return state
 
       const nextItems = prev.items.filter((it) => it.id !== action.itemId)
       if (nextItems.length === prev.items.length) return state
 
       const nextAmount = calculateAmount(nextItems)
-      const nextStatus: TableStatus = nextItems.length === 0 ? 'EMPTY' : prev.status === 'EMPTY' ? 'ORDERED' : prev.status
-      const nextStartedAt = nextItems.length === 0 ? null : prev.startedAt ?? Date.now()
 
       const nextTable: Table = {
         ...prev,
         items: nextItems,
         amount: nextAmount,
-        status: nextStatus,
-        startedAt: nextStartedAt,
       }
 
       return {
@@ -428,6 +461,7 @@ function reducer(state: AppState, action: Action): AppState {
     case 'ADD_ITEM': {
       const prev = state.tables[action.tableId]
       if (!prev) return state
+      if (prev.status !== 'EMPTY') return state
 
       const qty = action.qty ?? 1
       const existingIdx = prev.items.findIndex((it) => it.id === action.item.id)
@@ -440,14 +474,11 @@ function reducer(state: AppState, action: Action): AppState {
       }
 
       const nextAmount = calculateAmount(nextItems)
-      const nextStatus: TableStatus = prev.status === 'EMPTY' ? 'ORDERED' : prev.status
 
       const nextTable: Table = {
         ...prev,
         items: nextItems,
         amount: nextAmount,
-        status: nextStatus,
-        startedAt: prev.startedAt ?? Date.now(),
       }
 
       return {
@@ -520,6 +551,25 @@ function reducer(state: AppState, action: Action): AppState {
           notifications: state.ui.notifications.filter(
             (n) => !(n.kind === 'NEW_ORDER' && n.tableId === action.tableId),
           ),
+        },
+      }
+    }
+
+    case 'CLEAR_ALL_TABLES': {
+      const total = state.shop.totalTables
+      const nextTables = ensureTables(total)
+      return {
+        ...state,
+        tables: nextTables,
+        meta: {
+          ...state.meta,
+          lastAutoClearAt: action.at,
+        },
+        ui: {
+          ...state.ui,
+          notifications: [],
+          selectedTableId: null,
+          activeModal: null,
         },
       }
     }
@@ -739,6 +789,8 @@ export function useAppStore() {
       setNotes: (tableId: string, notes: string) => dispatch({ type: 'SET_NOTES', tableId, notes }),
       markPaid: (tableId: string) => dispatch({ type: 'MARK_PAID', tableId }),
       clearTable: (tableId: string) => dispatch({ type: 'CLEAR_TABLE', tableId }),
+      clearAllTables: (at: number) => dispatch({ type: 'CLEAR_ALL_TABLES', at }),
+      setTotalTables: (totalTables: number) => dispatch({ type: 'SET_TOTAL_TABLES', totalTables }),
       notify: (message: string) =>
         dispatch({
           type: 'PUSH_NOTIFICATION',
@@ -753,6 +805,26 @@ export function useAppStore() {
     }),
     [],
   )
+
+  useEffect(() => {
+    const run = () => {
+      const now = Date.now()
+      const d = new Date(now)
+      const oneAm = new Date(d)
+      oneAm.setHours(1, 0, 0, 0)
+
+      if (now < oneAm.getTime()) return
+
+      const last = state.meta.lastAutoClearAt ?? 0
+      if (last >= oneAm.getTime()) return
+
+      dispatch({ type: 'CLEAR_ALL_TABLES', at: now })
+    }
+
+    run()
+    const t = window.setInterval(run, 60_000)
+    return () => window.clearInterval(t)
+  }, [state.meta.lastAutoClearAt])
 
   return { state, dispatch, actions, tableIds }
 }

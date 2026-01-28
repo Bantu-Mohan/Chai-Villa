@@ -1,10 +1,10 @@
 .backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.28);
+  background: rgba(15, 23, 42, 0.22);
   display: grid;
   place-items: center;
-  padding: 20px;
+  padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));
   z-index: 50;
 }
 
@@ -13,12 +13,14 @@
   border-radius: 20px;
   border: 1px solid var(--stroke);
   background: var(--surface-strong);
-  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.18);
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.14), inset 0 0 0 1px rgba(15, 23, 42, 0.06), inset 0 -1px 0 rgba(15, 23, 42, 0.14);
   backdrop-filter: blur(14px);
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 14px;
+  max-height: calc(100vh - 40px);
+  overflow: hidden;
   min-width: 0;
 }
 
@@ -47,6 +49,9 @@
   display: flex;
   flex-wrap: wrap;
   gap: 14px;
+  flex: 1 1 auto;
+  overflow: auto;
+  padding-bottom: 2px;
   min-width: 0;
 }
 
@@ -63,18 +68,21 @@
 
 .panelTitle {
   font-weight: 800;
-  color: rgba(15, 23, 42, 0.86);
+  color: var(--text);
 }
 
 .catalog {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  max-height: 240px;
+  overflow: auto;
+  padding-right: 4px;
 }
 
 .itemBtn {
   border: 1px solid var(--stroke);
-  background: rgba(15, 23, 42, 0.03);
+  background: rgba(15, 23, 42, 0.02);
   color: var(--text);
   border-radius: 14px;
   padding: 10px;
@@ -85,6 +93,40 @@
   gap: 10px;
   flex: 1 1 160px;
   min-width: 0;
+}
+
+.itemBtnLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.itemThumb {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid var(--stroke);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.10);
+  flex: 0 0 auto;
+}
+
+.itemBtnText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.itemBtnName {
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .itemBtn:hover {
@@ -109,7 +151,7 @@
   padding: 8px 10px;
   border-radius: 12px;
   border: 1px solid var(--stroke);
-  background: rgba(15, 23, 42, 0.02);
+  background: rgba(15, 23, 42, 0.015);
 }
 
 .orderLeft {
@@ -128,7 +170,7 @@
   height: 34px;
   border-radius: 10px;
   border: 1px solid var(--stroke);
-  background: rgba(15, 23, 42, 0.04);
+  background: rgba(15, 23, 42, 0.03);
   color: var(--text);
   cursor: pointer;
   font-weight: 900;
@@ -179,7 +221,7 @@
 .select {
   width: 100%;
   border: 1px solid var(--stroke);
-  background: rgba(15, 23, 42, 0.03);
+  background: rgba(15, 23, 42, 0.02);
   color: var(--text);
   border-radius: 12px;
   padding: 10px;
@@ -190,7 +232,7 @@
   min-height: 84px;
   resize: vertical;
   border: 1px solid var(--stroke);
-  background: rgba(15, 23, 42, 0.03);
+  background: rgba(15, 23, 42, 0.02);
   color: var(--text);
   border-radius: 12px;
   padding: 10px;
@@ -255,11 +297,14 @@
 .billLog {
   display: grid;
   gap: 8px;
+  max-height: 260px;
+  overflow: auto;
+  padding-right: 4px;
 }
 
 .billRow {
   border: 1px solid var(--stroke);
-  background: rgba(0, 0, 0, 0.14);
+  background: rgba(15, 23, 42, 0.06);
   border-radius: 12px;
   padding: 8px 10px;
   display: grid;
@@ -293,4 +338,24 @@
   .modal {
     padding: 14px;
   }
+}
+
+:global(body[data-theme='dark']) .backdrop {
+  background: rgba(0, 0, 0, 0.40);
+}
+
+:global(body[data-theme='dark']) .modal {
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45), inset 0 0 0 1px rgba(255, 255, 255, 0.06), inset 0 -1px 0 rgba(255, 255, 255, 0.12);
+}
+
+:global(body[data-theme='dark']) .itemBtn,
+:global(body[data-theme='dark']) .orderRow,
+:global(body[data-theme='dark']) .select,
+:global(body[data-theme='dark']) .textarea,
+:global(body[data-theme='dark']) .iconBtn {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+:global(body[data-theme='dark']) .billRow {
+  background: rgba(255, 255, 255, 0.05);
 }

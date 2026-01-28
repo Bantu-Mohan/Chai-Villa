@@ -10,3 +10,108 @@
   padding: 14px;
   backdrop-filter: blur(12px);
 }
+
+.metricsBar {
+  border: 1px solid var(--stroke);
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.metric {
+  flex: 1 1 160px;
+  min-width: 0;
+  border: 1px solid var(--stroke);
+  background: var(--surface-strong);
+  border-radius: 14px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metricLabel {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.metricValue {
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.metricRight {
+  flex: 1 1 220px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.metricTime {
+  font-weight: 900;
+  font-size: 16px;
+}
+
+.tableControls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.tableBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid var(--stroke);
+  background: var(--surface-strong);
+  color: var(--text);
+  font-weight: 900;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.tableBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.tableCount {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.themeToggle {
+  position: fixed;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  border: 1px solid var(--stroke);
+  background: var(--surface-strong);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  z-index: 70;
+  transition: transform 140ms ease, filter 140ms ease;
+}
+
+.themeToggle:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.02);
+}
+
+.themeIcon {
+  display: block;
+}
