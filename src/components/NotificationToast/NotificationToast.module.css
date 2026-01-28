@@ -9,15 +9,15 @@
 
 .toast {
   border: 1px solid var(--stroke);
-  background: rgba(0, 0, 0, 0.35);
+  background: var(--surface);
   color: var(--text);
   border-radius: 14px;
   padding: 10px 12px;
   backdrop-filter: blur(12px);
   box-shadow: var(--shadow);
-  min-width: 240px;
-  max-width: 340px;
+  width: min(340px, calc(100vw - 36px));
   font-weight: 600;
+  min-width: 0;
 }
 
 .rowTop {
@@ -38,7 +38,7 @@
 
 .btn {
   border: 1px solid var(--stroke);
-  background: rgba(0, 0, 0, 0.18);
+  background: rgba(15, 23, 42, 0.04);
   color: var(--text);
   border-radius: 999px;
   padding: 6px 10px;

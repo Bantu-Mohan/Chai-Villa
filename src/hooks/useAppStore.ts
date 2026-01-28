@@ -124,7 +124,9 @@ function buildDefaultState(): AppState {
 }
 
 function normalizePersisted(persisted: PersistedState): PersistedState {
-  const totalTables = persisted?.shop?.totalTables ?? 20
+  const rawTotal = (persisted?.shop as { totalTables?: unknown } | undefined)?.totalTables
+  const totalTables =
+    typeof rawTotal === 'number' && Number.isFinite(rawTotal) && rawTotal >= 1 ? rawTotal : 20
   const tables = ensureTables(totalTables, persisted?.tables)
 
   for (const id of Object.keys(tables)) {

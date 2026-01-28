@@ -1,8 +1,8 @@
 :root {
-  --bg: #0f0b07;
-  --surface: rgba(255, 255, 255, 0.06);
-  --surface-strong: rgba(255, 255, 255, 0.1);
-  --stroke: rgba(255, 255, 255, 0.12);
+  --bg: #f7f7fb;
+  --surface: rgba(255, 255, 255, 0.78);
+  --surface-strong: rgba(255, 255, 255, 0.92);
+  --stroke: rgba(15, 23, 42, 0.12);
 
   --chai-brown: #3a2516;
   --chai-brown-2: #2a1a10;
@@ -13,10 +13,10 @@
   --amber: #f59e0b;
   --rose: #fb7185;
 
-  --text: rgba(255, 255, 255, 0.92);
-  --muted: rgba(255, 255, 255, 0.7);
+  --text: rgba(15, 23, 42, 0.92);
+  --muted: rgba(15, 23, 42, 0.62);
 
-  --shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+  --shadow: 0 14px 40px rgba(15, 23, 42, 0.10);
   --radius: 16px;
   --radius-sm: 12px;
 

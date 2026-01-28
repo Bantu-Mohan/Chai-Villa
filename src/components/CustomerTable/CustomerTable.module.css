@@ -1,17 +1,18 @@
 .screen {
   min-height: 100vh;
-  background: #0b0f14;
-  color: #f4f6f8;
-  display: grid;
-  grid-template-rows: auto auto 1fr auto;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .header {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: #0b0f14;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+  background: var(--bg);
+  border-bottom: 1px solid var(--stroke);
   padding: 14px 14px 10px;
   display: grid;
   gap: 6px;
@@ -23,7 +24,7 @@
 }
 
 .tableNo {
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--muted);
   font-size: 13px;
 }
 
@@ -31,8 +32,8 @@
   position: sticky;
   top: 62px;
   z-index: 19;
-  background: #0b0f14;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--bg);
+  border-bottom: 1px solid var(--stroke);
   display: flex;
   gap: 14px;
   padding: 10px 14px;
@@ -41,34 +42,42 @@
 
 .tab {
   padding: 8px 2px;
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--muted);
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
   font-weight: 700;
   cursor: pointer;
   white-space: nowrap;
+  flex: 0 0 auto;
 }
 
 .tabActive {
-  color: #ffffff;
-  border-bottom-color: #ffffff;
+  color: var(--text);
+  border-bottom-color: rgba(45, 212, 191, 0.95);
 }
 
 .list {
   padding: 14px;
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
   gap: 12px;
   overflow: auto;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .itemCard {
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid var(--stroke);
   border-radius: 14px;
   padding: 12px;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 10px;
-  background: transparent;
+  background: var(--surface);
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .itemTop {
@@ -83,6 +92,7 @@
   align-items: center;
   gap: 12px;
   min-width: 0;
+  flex: 1 1 auto;
 }
 
 .itemMedia {
@@ -107,27 +117,31 @@
 .itemPrice {
   color: rgba(255, 255, 255, 0.8);
   font-weight: 700;
+  flex: 0 0 auto;
 }
 
 .qtyRow {
-  display: grid;
-  grid-template-columns: 1fr auto auto auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
   align-items: center;
   gap: 10px;
 }
 
 .qtyLabel {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--muted);
   font-size: 13px;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .qtyBtn {
   width: 52px;
   height: 44px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: transparent;
-  color: #fff;
+  border: 1px solid var(--stroke);
+  background: var(--surface-strong);
+  color: var(--text);
   font-size: 20px;
   font-weight: 900;
 }
@@ -147,8 +161,8 @@
   position: sticky;
   bottom: 0;
   z-index: 30;
-  background: #0b0f14;
-  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  background: var(--surface-strong);
+  border-top: 1px solid var(--stroke);
   padding: 10px 14px;
 }
 
@@ -157,11 +171,15 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 .cartSummary {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 2px;
+  flex: 1 1 160px;
+  min-width: 0;
 }
 
 .cartTitle {
@@ -169,7 +187,7 @@
 }
 
 .cartMeta {
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--muted);
   font-size: 12px;
 }
 
@@ -177,10 +195,30 @@
   height: 44px;
   padding: 0 14px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  background: #ffffff;
-  color: #0b0f14;
+  border: 1px solid rgba(45, 212, 191, 0.35);
+  background: linear-gradient(135deg, rgba(45, 212, 191, 0.95), rgba(22, 163, 74, 0.95));
+  color: #062018;
   font-weight: 900;
+  flex: 1 1 160px;
+  min-width: 0;
+  transition: transform 140ms ease, filter 140ms ease;
+}
+
+.placeBtn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.02);
+}
+
+@media (min-width: 820px) {
+  .list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .itemCard {
+    flex: 1 1 320px;
+  }
 }
 
 .placeBtn:disabled {
@@ -196,17 +234,18 @@
 }
 
 .cartRow {
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid var(--stroke);
   border-radius: 12px;
   padding: 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  background: var(--surface);
 }
 
 .small {
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--muted);
   font-size: 12px;
 }
 

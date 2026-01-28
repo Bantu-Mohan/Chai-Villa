@@ -4,9 +4,9 @@
 
 .gridWrap {
   border: 1px solid var(--stroke);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--surface);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 14px;
-  backdrop-filter: blur(14px);
+  backdrop-filter: blur(12px);
 }

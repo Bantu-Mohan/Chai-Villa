@@ -1,5 +1,21 @@
 .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: stretch;
+}
+
+.grid > * {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+@media (min-width: 720px) {
+  .grid {
+    gap: 18px;
+  }
+
+  .grid > * {
+    flex-basis: 320px;
+  }
 }

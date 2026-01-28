@@ -1,7 +1,7 @@
 .backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(15, 23, 42, 0.28);
   display: grid;
   place-items: center;
   padding: 20px;
@@ -12,12 +12,14 @@
   width: min(940px, 100%);
   border-radius: 20px;
   border: 1px solid var(--stroke);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.06));
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(16px);
+  background: var(--surface-strong);
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.18);
+  backdrop-filter: blur(14px);
   padding: 16px;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 14px;
+  min-width: 0;
 }
 
 .header {
@@ -34,7 +36,7 @@
 
 .closeBtn {
   border: 1px solid var(--stroke);
-  background: rgba(0, 0, 0, 0.18);
+  background: rgba(15, 23, 42, 0.04);
   color: var(--text);
   border-radius: 999px;
   padding: 8px 12px;
@@ -42,34 +44,37 @@
 }
 
 .body {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-wrap: wrap;
   gap: 14px;
+  min-width: 0;
 }
 
 .panel {
   border: 1px solid var(--stroke);
-  background: rgba(0, 0, 0, 0.14);
+  background: var(--surface);
   border-radius: 16px;
   padding: 12px;
   display: grid;
   gap: 10px;
+  flex: 1 1 340px;
+  min-width: 0;
 }
 
 .panelTitle {
   font-weight: 800;
-  color: var(--cream);
+  color: rgba(15, 23, 42, 0.86);
 }
 
 .catalog {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
 }
 
 .itemBtn {
   border: 1px solid var(--stroke);
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(15, 23, 42, 0.03);
   color: var(--text);
   border-radius: 14px;
   padding: 10px;
@@ -78,10 +83,12 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  flex: 1 1 160px;
+  min-width: 0;
 }
 
 .itemBtn:hover {
-  border-color: rgba(255, 255, 255, 0.22);
+  border-color: rgba(15, 23, 42, 0.18);
 }
 
 .small {
@@ -102,7 +109,7 @@
   padding: 8px 10px;
   border-radius: 12px;
   border: 1px solid var(--stroke);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(15, 23, 42, 0.02);
 }
 
 .orderLeft {
@@ -121,7 +128,7 @@
   height: 34px;
   border-radius: 10px;
   border: 1px solid var(--stroke);
-  background: rgba(0, 0, 0, 0.18);
+  background: rgba(15, 23, 42, 0.04);
   color: var(--text);
   cursor: pointer;
   font-weight: 900;
@@ -139,19 +146,21 @@
 }
 
 .statusRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
 }
 
 .statusBtn {
   border: 1px solid var(--stroke);
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(15, 23, 42, 0.03);
   color: var(--text);
   border-radius: 12px;
   padding: 10px;
   cursor: pointer;
   font-weight: 800;
+  flex: 1 1 120px;
+  min-width: 0;
 }
 
 .statusBtnActive {
@@ -164,12 +173,13 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .select {
   width: 100%;
   border: 1px solid var(--stroke);
-  background: rgba(0, 0, 0, 0.18);
+  background: rgba(15, 23, 42, 0.03);
   color: var(--text);
   border-radius: 12px;
   padding: 10px;
@@ -180,7 +190,7 @@
   min-height: 84px;
   resize: vertical;
   border: 1px solid var(--stroke);
-  background: rgba(0, 0, 0, 0.18);
+  background: rgba(15, 23, 42, 0.03);
   color: var(--text);
   border-radius: 12px;
   padding: 10px;
@@ -228,7 +238,7 @@
 
 .billCard {
   border: 1px solid var(--stroke);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(15, 23, 42, 0.02);
   border-radius: 14px;
   padding: 10px;
   display: grid;
@@ -280,11 +290,7 @@
 }
 
 @media (max-width: 820px) {
-  .body {
-    grid-template-columns: 1fr;
-  }
-
-  .catalog {
-    grid-template-columns: 1fr;
+  .modal {
+    padding: 14px;
   }
 }
